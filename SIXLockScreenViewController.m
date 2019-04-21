@@ -189,7 +189,9 @@
       }
     } completion:^(BOOL finished) {
       if (self.view.center.y == -[UIScreen mainScreen].bounds.size.height / 2) {
-        [self.scrollView scrollToPageAtIndex:2 animated:NO withCompletion:nil];
+        [self.scrollView scrollToPageAtIndex:2 animated:NO withCompletion:^{
+          [self.view setCenter:CGPointMake(self.view.center.x, [UIScreen mainScreen].bounds.size.height / 2)];
+        }];
       }
     }];
   }
