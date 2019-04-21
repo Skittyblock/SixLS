@@ -1,0 +1,9 @@
+Package: xyz.skitty.sixls
+Name: Six (LS)
+Depends: mobilesubstrate, preferenceloader, firmware (>= 11.0)
+Version: 1.0
+Architecture: iphoneos-arm
+Description: iOS 6 Style Lock Screen!
+Maintainer: Skitty
+Author: Skitty
+Section: Tweaks
