@@ -14,8 +14,9 @@ static bool wallpaperGradient;
 static bool militaryTime;
 static bool modernTime;
 static bool classicNotifications;
-static bool chargeSound;
 static bool lockSound;
+static bool unlockSound;
+static bool chargeSound;
 
 static bool isLocked = true;
 static bool unlockAllowed = false;
@@ -47,8 +48,9 @@ static void refreshPrefs() {
   militaryTime = [([settings objectForKey:@"militaryTime"] ?: @(NO)) boolValue];
   modernTime = [([settings objectForKey:@"modernTime"] ?: @(NO)) boolValue];
   classicNotifications = [([settings objectForKey:@"classicNotifications"] ?: @(YES)) boolValue];
-  chargeSound = [([settings objectForKey:@"chargeSound"] ?: @(YES)) boolValue];
   lockSound = [([settings objectForKey:@"lockSound"] ?: @(YES)) boolValue];
+  unlockSound = [([settings objectForKey:@"unlockSound"] ?: @(YES)) boolValue];
+  chargeSound = [([settings objectForKey:@"chargeSound"] ?: @(YES)) boolValue];
 }
 
 static void PreferencesChangedCallback(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo) {
@@ -64,6 +66,19 @@ static void setIsLocked(bool locked) {
 }
 
 %group LockScreen
+
+// Unlock Sound
+%hook SBCoverSheetPrimarySlidingViewController
+- (void)viewWillDisappear:(BOOL)arg1 {
+  %orig;
+  if (enabled && unlockSound && mainPageView.sixView.alpha == 1) {
+    SystemSoundID sound = 0;
+    AudioServicesDisposeSystemSoundID(sound);
+    AudioServicesCreateSystemSoundID((CFURLRef) CFBridgingRetain([NSURL fileURLWithPath:@"/Library/Application Support/Six/unlock.caf"]), &sound);
+		AudioServicesPlaySystemSound((SystemSoundID)sound);
+  }
+}
+%end
 
 // Lock Sound
 %hook SBSleepWakeHardwareButtonInteraction
@@ -142,6 +157,14 @@ static void setIsLocked(bool locked) {
 }
 %end
 
+// Rotation Fix
+%hook SBDashBoardViewController
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)orientation duration:(NSTimeInterval)duration {
+  %orig;
+  [mainPageView updateFrames];
+}
+%end
+
 // Lock Screen Views
 %hook SBDashBoardMainPageView
 %property (nonatomic, retain) UIImageView *wallpaperGradient;
@@ -151,16 +174,14 @@ static void setIsLocked(bool locked) {
 %property (nonatomic, retain) SIXLockScreenView *sixView;
 - (void)layoutSubviews {
   %orig;
-
-  mainPageView = self;
-  [viewsToLayout addObject:self];
+  if (!mainPageView) {
+    mainPageView = self;
+    [viewsToLayout addObject:self];
+  }
   [self layoutSix];
-
-  [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged:) name:UIDeviceOrientationDidChangeNotification object:[UIDevice currentDevice]];
 }
 %new
-- (void)orientationChanged:(NSNotification *)notification {
+- (void)updateFrames {
   [self layoutSix];
   self.sixController.statusBarBackground.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, statusHeight);
   self.sixController.topBar.frame = CGRectMake(0, statusHeight, [UIScreen mainScreen].bounds.size.width, 95);
@@ -239,7 +260,7 @@ static void setIsLocked(bool locked) {
           self.sixController.scrollView = ((SBPagedScrollView *)view);
         }
        }
-    
+
       self.sixController.statusBarHeight = statusHeight;
       self.sixController.unlockText = slideText;
       self.sixController.militaryTime = militaryTime;
@@ -250,6 +271,7 @@ static void setIsLocked(bool locked) {
       [self.sixController layoutSix];
     }
 
+    self.sixView.alpha = 1;
     [self.sixController updateViews];
     [self addSubview:self.sixView];
   } else {
@@ -261,6 +283,7 @@ static void setIsLocked(bool locked) {
       [self.wallpaperGradient removeFromSuperview];
     }
     if (self.sixView) {
+      self.sixView.alpha = 0;
       [self.sixView removeFromSuperview];
     }
   }

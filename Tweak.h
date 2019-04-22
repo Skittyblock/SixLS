@@ -35,8 +35,10 @@
 @end
 
 @interface SBLockScreenManager : NSObject
+@property (nonatomic, readonly) BOOL isUILocked;
 + (id)sharedInstance;
 - (void)lockScreenViewControllerRequestsUnlock;
+- (void)crashSB;
 @end
 
 @interface SBDockView : UIView
@@ -99,8 +101,7 @@
 @property (nonatomic, retain) SIXLockScreenView *sixView;
 + (id)sharedInstance;
 - (void)layoutSix;
-// fake lol
-- (void)crashSpringboard;
+- (void)updateFrames;
 @end
 
 @interface SBFLockScreenDateView : UIView

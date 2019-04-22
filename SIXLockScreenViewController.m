@@ -137,13 +137,17 @@
   [self.topBar addSubview:self.dateLabel];
   [self.bottomBar addSubview:self.trackBackground];
   [self.bottomBar addSubview:self.cameraGrabber];
-  [self.bottomBar addGestureRecognizer:self.cameraPanRecognizer];
-  [self.bottomBar addGestureRecognizer:self.cameraTapRecognizer];
+  [self.cameraGrabber addGestureRecognizer:self.cameraPanRecognizer];
+  [self.cameraGrabber addGestureRecognizer:self.cameraTapRecognizer];
   [self.trackBackground addSubview:self.slideText];
   [self.view addSubview:self.unlockSlider];
   [self.view addSubview:self.slideUpBackground];
 }
 - (void)updateViews {
+  if (self.view.center.y != self.view.bounds.size.height / 2) {
+    [self.view setCenter:CGPointMake(self.view.center.x, [UIScreen mainScreen].bounds.size.height / 2)];
+  }
+
   if (self.notificationList.allNotificationRequests.count == 0) {
     if (self.notificationView) {
       [self.notificationView removeFromSuperview];
@@ -364,16 +368,18 @@
 }
 - (void)removeNotificationRequest:(NCNotificationRequest *)request {
   bool remove = false;
-  for (NCNotificationRequest *arrayRequest in self.notificationRequests) {
-    if (arrayRequest == request) {
-      remove = true;
+  if (self.notificationRequests.count > 0) {
+    for (NCNotificationRequest *arrayRequest in self.notificationRequests) {
+      if (arrayRequest == request) {
+        remove = true;
+      }
     }
-  }
-  if (remove) {
-    [self.cellHeights removeObjectAtIndex:[self.notificationRequests indexOfObject:request]];
-    [self.notificationRequests removeObject:request];
-    if (self.useNotifications) {
-      [self showNotificationTable];
+    if (remove) {
+      [self.cellHeights removeObjectAtIndex:[self.notificationRequests indexOfObject:request]];
+      [self.notificationRequests removeObject:request];
+      if (self.useNotifications) {
+        [self showNotificationTable];
+      }
     }
   }
 }
