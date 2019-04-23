@@ -162,9 +162,6 @@
       self.cellHeights = nil;
     }
   }
-  if (self.notificationTable) {
-    [self.notificationTable reloadData];
-  }
 
   [self.unlockSlider setValue:0 animated:NO];
 

@@ -19,7 +19,7 @@ static bool unlockSound;
 static bool chargeSound;
 
 static bool isLocked = true;
-static bool unlockAllowed = false;
+static bool unlockAllowed = NO;
 
 static NSMutableArray *viewsToLayout = [NSMutableArray new];
 
@@ -59,7 +59,7 @@ static void PreferencesChangedCallback(CFNotificationCenterRef center, void *obs
 
 static void setIsLocked(bool locked) {
   isLocked = locked;
-  unlockAllowed = false;
+  unlockAllowed = NO;
   for (UIView *view in viewsToLayout) {
     [view layoutSix];
   }
@@ -152,6 +152,7 @@ static void setIsLocked(bool locked) {
 - (void)viewWillDisappear:(BOOL)arg1 {
   %orig;
   if (enabled) {
+    unlockAllowed = NO;
     [mainPageView.sixController showBars];
   }
 }
@@ -516,6 +517,26 @@ static void setIsLocked(bool locked) {
   } else {
     self.hidden = NO;
   }
+}
+%end
+
+// Fix Disable Home with Notification Sliders
+// Yes, I'm hooking my own classes.
+%hook SIXNotificationCell
+- (void)sliderStopped:(UISlider *)slider {
+  if (slider.value == 1) {
+    unlockAllowed = YES;
+  }
+  %orig;
+}
+%end
+
+%hook SIXNotificationAlertView
+- (void)sliderStopped:(UISlider *)slider {
+  if (slider.value == 1) {
+    unlockAllowed = YES;
+  }
+  %orig;
 }
 %end
 
