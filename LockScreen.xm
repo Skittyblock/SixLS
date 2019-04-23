@@ -126,6 +126,11 @@ static void setIsLocked(bool locked) {
 %end
 
 %hook SBDashBoardViewController
+// Rotation Fix?
+- (void)_calculateAppearanceForCurrentOrientation {
+  %orig;
+  [mainPageView updateFrames];
+}
 // Show Charging View
 - (void)_transitionChargingViewToVisible:(BOOL)arg1 showBattery:(BOOL)arg2 animated:(BOOL)arg3 {
   if (enabled && chargeView) {
@@ -155,14 +160,6 @@ static void setIsLocked(bool locked) {
     unlockAllowed = NO;
     [mainPageView.sixController showBars];
   }
-}
-%end
-
-// Rotation Fix
-%hook SBDashBoardViewController
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)orientation duration:(NSTimeInterval)duration {
-  %orig;
-  [mainPageView updateFrames];
 }
 %end
 
