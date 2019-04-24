@@ -3,7 +3,10 @@
 #import "SIXLockScreenViewController.h"
 #import "SIXNotificationCell.h"
 
+#define isiPad ([(NSString *)[UIDevice currentDevice].model hasPrefix:@"iPad"])
+
 @implementation SIXLockScreenViewController
+
 - (void)layoutSix {
   if (self.view.center.y != self.view.bounds.size.height / 2) {
     [self.view setCenter:CGPointMake(self.view.center.x, [UIScreen mainScreen].bounds.size.height / 2)];
@@ -40,7 +43,7 @@
     self.timeLabel.backgroundColor = [UIColor clearColor];
     self.timeLabel.textColor = [UIColor whiteColor];
     self.timeLabel.textAlignment = NSTextAlignmentCenter;
-    self.timeLabel.font = [UIFont fontWithName:@"Helvetica-Light" size:58];
+    self.timeLabel.font = !isiPad ? [UIFont fontWithName:@"Helvetica-Light" size:58] : [UIFont fontWithName:@"Helvetica-Light" size:68];
     self.timeLabel.layer.masksToBounds = NO;
     self.timeLabel.layer.shadowOffset = CGSizeMake(0, -1);
     self.timeLabel.layer.shadowRadius = 0;
@@ -60,7 +63,7 @@
     self.dateLabel.layer.shadowOpacity = 0.4;
   }
 
-  if (!self.cameraGrabber) {
+  if (!self.cameraGrabber && !isiPad) {
     self.cameraGrabber = [[UIImageView alloc] initWithFrame:CGRectMake([UIScreen mainScreen].bounds.size.width - 50, 21.5, 30, 52)];
     self.cameraGrabber.image = [UIImage imageWithContentsOfFile:@"/Library/Application Support/Six/camera.png"];
     self.cameraGrabber.contentMode = UIViewContentModeScaleToFill;
@@ -172,6 +175,9 @@
   self.slideText.layer.sublayers[0].sublayers[2].backgroundColor = [UIColor colorWithWhite:1 alpha:0.65].CGColor;
 }
 - (void)cameraDragged:(UIPanGestureRecognizer*)sender {
+  if ( isiPad ) {
+    return;
+  }
   CGPoint translatedPoint = [sender translationInView:self.view];
   translatedPoint = CGPointMake(self.view.center.x, self.view.center.y + translatedPoint.y);
 
@@ -198,6 +204,9 @@
   }
 }
 - (void)cameraTapped:(UITapGestureRecognizer*)sender {
+  if ( isiPad ) {
+    return;
+  }
   if (sender.state == UIGestureRecognizerStateEnded) {
     [UIView animateWithDuration:0.2 animations:^{
       [self.view setCenter:CGPointMake(self.view.center.x, self.view.center.y - 20)];
