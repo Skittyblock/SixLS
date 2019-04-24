@@ -175,11 +175,9 @@
   self.slideText.layer.sublayers[0].sublayers[2].backgroundColor = [UIColor colorWithWhite:1 alpha:0.65].CGColor;
 }
 - (void)cameraDragged:(UIPanGestureRecognizer*)sender {
-
   if ( isiPad ) {
     return;
   }
-
   CGPoint translatedPoint = [sender translationInView:self.view];
   translatedPoint = CGPointMake(self.view.center.x, self.view.center.y + translatedPoint.y);
 
@@ -206,11 +204,9 @@
   }
 }
 - (void)cameraTapped:(UITapGestureRecognizer*)sender {
-
   if ( isiPad ) {
     return;
   }
-
   if (sender.state == UIGestureRecognizerStateEnded) {
     [UIView animateWithDuration:0.2 animations:^{
       [self.view setCenter:CGPointMake(self.view.center.x, self.view.center.y - 20)];

@@ -128,7 +128,7 @@ static void setIsLocked(bool locked) {
 %end
 
 %hook SBDashBoardViewController
-// Rotation Fix?
+// Rotate Views
 - (void)_calculateAppearanceForCurrentOrientation {
   %orig;
   [mainPageView updateFrames];
@@ -177,6 +177,10 @@ static void setIsLocked(bool locked) {
   if (!mainPageView) {
     mainPageView = self;
     [viewsToLayout addObject:self];
+    if (isiPad) {
+      [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateFrames) name:UIDeviceOrientationDidChangeNotification object:[UIDevice currentDevice]];
+    }
   }
   [self layoutSix];
 }
@@ -185,7 +189,7 @@ static void setIsLocked(bool locked) {
   [self layoutSix];
   self.sixController.statusBarBackground.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, statusHeight);
 
-  if ( !isiPad ) { // If the user is on an iPhone
+  if ( !isiPad ) {
     self.sixController.topBar.frame = CGRectMake(0, statusHeight, [UIScreen mainScreen].bounds.size.width, 95);
     self.sixController.bottomBar.frame = CGRectMake(0, [UIScreen mainScreen].bounds.size.height - 95, [UIScreen mainScreen].bounds.size.width, 95);
     self.sixController.trackBackground.frame = CGRectMake(20, 20, [UIScreen mainScreen].bounds.size.width - 85, 52);
@@ -194,13 +198,12 @@ static void setIsLocked(bool locked) {
     self.sixController.cameraGrabber.frame = CGRectMake([UIScreen mainScreen].bounds.size.width - 50, 21.5, 30, 52);
     self.sixController.slideText.frame = CGRectMake(([UIScreen mainScreen].bounds.size.width / 2) - (([UIScreen mainScreen].bounds.size.width - 155) / 2) - 12.5, 11, [UIScreen mainScreen].bounds.size.width - 155, 30);
     self.sixController.unlockSlider.frame = CGRectMake(23, [UIScreen mainScreen].bounds.size.height - 71, [UIScreen mainScreen].bounds.size.width - 91, 47);
-  } else { // If the user is on an iPad
+  } else {
     self.sixController.topBar.frame = CGRectMake(0, statusHeight, [UIScreen mainScreen].bounds.size.width, 100);
-    self.sixController.bottomBar.frame = CGRectMake(0, [UIScreen mainScreen].bounds.size.height - 100, [UIScreen mainScreen].bounds.size.width, 105);
-    self.sixController.trackBackground.frame = CGRectMake(([UIScreen mainScreen].bounds.size.width / 2) - 130, 25, 250, 52);
+    self.sixController.bottomBar.frame = CGRectMake(0, [UIScreen mainScreen].bounds.size.height - 100, [UIScreen mainScreen].bounds.size.width, 100);
+    self.sixController.trackBackground.frame = CGRectMake(([UIScreen mainScreen].bounds.size.width / 2) - 128, 24, 256, 52);
     self.sixController.timeLabel.frame = CGRectMake(0, 10, [UIScreen mainScreen].bounds.size.width, 60);
     self.sixController.dateLabel.frame = CGRectMake(0, 65, [UIScreen mainScreen].bounds.size.width, 30);
-    self.sixController.cameraGrabber.frame = CGRectMake([UIScreen mainScreen].bounds.size.width - 50, 21.5, 30, 52);
     self.sixController.slideText.frame = CGRectMake(([UIScreen mainScreen].bounds.size.width / 2) - (([UIScreen mainScreen].bounds.size.width - 155) / 2) - 110, 11, 365, 30);
     self.sixController.unlockSlider.frame = CGRectMake(([UIScreen mainScreen].bounds.size.width / 2) - 127, [UIScreen mainScreen].bounds.size.height - 71, 245, 47);
   }
