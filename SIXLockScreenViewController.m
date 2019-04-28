@@ -133,9 +133,14 @@
   [self updateTime];
   [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(updateTime) userInfo:nil repeats:YES];
 
-  [self.view addSubview:self.statusBarBackground];
-  [self.view addSubview:self.topBar];
-  [self.view addSubview:self.bottomBar];
+  if (!self.disableTimeBar) {
+    [self.view addSubview:self.statusBarBackground];
+    [self.view addSubview:self.topBar];
+  }
+  if (!self.disableSlideBar) {
+    [self.view addSubview:self.bottomBar];
+    [self.view addSubview:self.unlockSlider];
+  }
   [self.topBar addSubview:self.timeLabel];
   [self.topBar addSubview:self.dateLabel];
   [self.bottomBar addSubview:self.trackBackground];
@@ -143,7 +148,6 @@
   [self.cameraGrabber addGestureRecognizer:self.cameraPanRecognizer];
   [self.cameraGrabber addGestureRecognizer:self.cameraTapRecognizer];
   [self.trackBackground addSubview:self.slideText];
-  [self.view addSubview:self.unlockSlider];
   [self.view addSubview:self.slideUpBackground];
 }
 - (void)updateViews {

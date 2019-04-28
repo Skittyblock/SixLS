@@ -5,7 +5,7 @@
 	<key>entry</key>
 	<dict>
 		<key>bundle</key>
-		<string>Six</string>
+		<string>SixLS</string>
 		<key>cell</key>
 		<string>PSLinkCell</string>
 		<key>detail</key>

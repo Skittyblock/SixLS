@@ -19,6 +19,8 @@ static bool classicNotifications;
 static bool lockSound;
 static bool unlockSound;
 static bool chargeSound;
+static bool disableTimeBar;
+static bool disableSlideBar;
 
 static bool isLocked = true;
 static bool unlockAllowed = NO;
@@ -53,6 +55,8 @@ static void refreshPrefs() {
   lockSound = [([settings objectForKey:@"lockSound"] ?: @(YES)) boolValue];
   unlockSound = [([settings objectForKey:@"unlockSound"] ?: @(YES)) boolValue];
   chargeSound = [([settings objectForKey:@"chargeSound"] ?: @(YES)) boolValue];
+  disableTimeBar = [([settings objectForKey:@"disableTimeBar"] ?: @(NO)) boolValue];
+  disableSlideBar = [([settings objectForKey:@"disableSlideBar"] ?: @(NO)) boolValue];
 }
 
 static void PreferencesChangedCallback(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo) {
@@ -189,7 +193,7 @@ static void setIsLocked(bool locked) {
   [self layoutSix];
   self.sixController.statusBarBackground.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, statusHeight);
 
-  if ( !isiPad ) {
+  if (!isiPad) {
     self.sixController.topBar.frame = CGRectMake(0, statusHeight, [UIScreen mainScreen].bounds.size.width, 95);
     self.sixController.bottomBar.frame = CGRectMake(0, [UIScreen mainScreen].bounds.size.height - 95, [UIScreen mainScreen].bounds.size.width, 95);
     self.sixController.trackBackground.frame = CGRectMake(20, 20, [UIScreen mainScreen].bounds.size.width - 85, 52);
@@ -207,7 +211,7 @@ static void setIsLocked(bool locked) {
     self.sixController.slideText.frame = CGRectMake(([UIScreen mainScreen].bounds.size.width / 2) - (([UIScreen mainScreen].bounds.size.width - 155) / 2) - 110, 11, 365, 30);
     self.sixController.unlockSlider.frame = CGRectMake(([UIScreen mainScreen].bounds.size.width / 2) - 127, [UIScreen mainScreen].bounds.size.height - 71, 245, 47);
   }
-  
+
   self.sixController.slideUpBackground.frame = CGRectMake(0, [UIScreen mainScreen].bounds.size.height, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
   if (self.sixController.notificationTable) {
     self.sixController.notificationTable.frame = CGRectMake(0, statusHeight + 95, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height - (statusHeight + 190));
@@ -282,6 +286,8 @@ static void setIsLocked(bool locked) {
       self.sixController.militaryTime = militaryTime;
       self.sixController.modernTime = modernTime;
       self.sixController.useNotifications = classicNotifications;
+      self.sixController.disableTimeBar = disableTimeBar;
+      self.sixController.disableSlideBar = disableSlideBar;
       self.sixView.statusBarHeight = statusHeight;
       self.sixView.useNotifications = classicNotifications;
       [self.sixController layoutSix];
@@ -310,7 +316,7 @@ static void setIsLocked(bool locked) {
 // Weird way to do this, I know. It was the only way I could get it to work.
 %hook SBDashBoardMainPageContentViewController
 - (void)aggregateAppearance:(SBDashBoardAppearance *)arg1 {
-  if (enabled && isLocked) {
+  if (enabled && isLocked && !disableSlideBar) {
     SBDashBoardComponent *pageControl = [[%c(SBDashBoardComponent) pageControl] hidden:YES];
     [arg1 addComponent:pageControl];
     %orig(arg1);
@@ -329,7 +335,7 @@ static void setIsLocked(bool locked) {
 }
 %new
 - (void)layoutSix {
-  if (enabled && isLocked) {
+  if (enabled && isLocked && !disableTimeBar) {
     self.hidden = YES;
     self.alpha = 0;
   } else {
@@ -348,7 +354,7 @@ static void setIsLocked(bool locked) {
 }
 %new
 - (void)layoutSix {
-  if (enabled && isLocked) {
+  if (enabled && isLocked && !disableSlideBar) {
     self.scrollEnabled = NO;
   } else {
     self.scrollEnabled = YES;
@@ -366,7 +372,7 @@ static void setIsLocked(bool locked) {
 %new
 - (void)layoutSix {
   UIView *quickActions = MSHookIvar<UIView *>(self, "_quickActionsView");
-  if (enabled && isLocked) {
+  if (enabled && isLocked && !disableSlideBar) {
     quickActions.hidden = YES;
     quickActions.alpha = 0;
   } else {
@@ -385,7 +391,7 @@ static void setIsLocked(bool locked) {
 }
 %new
 - (void)layoutSix {
-  if (enabled && isLocked) {
+  if (enabled && isLocked && !disableTimeBar) {
     self.hidden = YES;
     self.alpha = 0;
   } else {
@@ -403,7 +409,7 @@ static void setIsLocked(bool locked) {
 }
 %new
 - (void)layoutSix {
-  if (enabled && isLocked) {
+  if (enabled && isLocked && !disableTimeBar) {
     self.hidden = YES;
     self.alpha = 0;
   } else {
@@ -422,7 +428,7 @@ static void setIsLocked(bool locked) {
 }
 %new
 - (void)layoutSix {
-  if (enabled && isLocked) {
+  if (enabled && isLocked && !disableSlideBar) {
     self.view.hidden = YES;
     self.view.alpha = 0;
   } else {
@@ -440,7 +446,7 @@ static void setIsLocked(bool locked) {
 }
 %new
 - (void)layoutSix {
-  if (enabled && isLocked) {
+  if (enabled && isLocked && !disableSlideBar) {
     self.view.hidden = YES;
     self.view.alpha = 0;
   } else {
@@ -453,7 +459,7 @@ static void setIsLocked(bool locked) {
 // Disable Swipe Gesture
 %hook SBCoverSheetScreenEdgePanGestureRecognizer
 - (BOOL)isEnabled {
-  if (enabled && isLocked) {
+  if (enabled && isLocked && !disableSlideBar) {
     return NO;
   } else {
     return %orig;
@@ -463,7 +469,7 @@ static void setIsLocked(bool locked) {
 
 %hook SBCoverSheetSlidingViewController
 - (void)_handleDismissGesture:(id)arg1 {
-    if (enabled && isLocked) {
+    if (enabled && isLocked && !disableSlideBar) {
         return;
     }
     %orig;
@@ -478,6 +484,7 @@ static void setIsLocked(bool locked) {
 %end
 
 // BUG: Won't display stock charging view if disable home is enabled
+// Is this what's causing alarm issues for people?
 %hook SBDashBoardModalPresentationViewController
 - (void)presentContentViewController:(UIViewController *)arg1 animated:(BOOL)arg2 completion:(/*^block*/id)arg3 {
   for (UIView *view in arg1.view.subviews) {
@@ -508,14 +515,14 @@ static void setIsLocked(bool locked) {
 %hook NCNotificationListCollectionView
 - (UIEdgeInsets)adjustedContentInset {
   UIEdgeInsets inset = %orig;
-  if (enabled && isLocked && !classicNotifications) {
+  if (enabled && isLocked && !classicNotifications && !disableTimeBar) {
     inset.top = statusHeight + 100;
   }
   return inset;
 }
 - (CGPoint)minimumContentOffset {
   CGPoint offset = %orig;
-  if (enabled && isLocked && !classicNotifications) {
+  if (enabled && isLocked && !classicNotifications && !disableTimeBar) {
     offset.y = 0;
   }
   return offset;

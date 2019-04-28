@@ -27,6 +27,8 @@
 @property (nonatomic, assign) bool useNotifications;
 @property (nonatomic, assign) bool militaryTime;
 @property (nonatomic, assign) bool modernTime;
+@property (nonatomic, assign) bool disableTimeBar;
+@property (nonatomic, assign) bool disableSlideBar;
 - (void)showBars;
 - (void)hideBars;
 - (void)layoutSix;
