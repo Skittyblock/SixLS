@@ -77,7 +77,7 @@ static void setIsLocked(bool locked) {
 %hook SBCoverSheetPrimarySlidingViewController
 - (void)viewWillDisappear:(BOOL)arg1 {
   %orig;
-  if (enabled && unlockSound && mainPageView.sixView.alpha == 1) {
+  if (unlockSound && mainPageView.sixView.alpha == 1) {
     SystemSoundID sound = 0;
     AudioServicesDisposeSystemSoundID(sound);
     AudioServicesCreateSystemSoundID((CFURLRef) CFBridgingRetain([NSURL fileURLWithPath:@"/Library/Application Support/Six/unlock.caf"]), &sound);
@@ -89,7 +89,7 @@ static void setIsLocked(bool locked) {
 // Lock Sound
 %hook SBSleepWakeHardwareButtonInteraction
 - (void)_playLockSound {
-  if (enabled && lockSound) {
+  if (lockSound) {
     SystemSoundID sound = 0;
     AudioServicesDisposeSystemSoundID(sound);
     AudioServicesCreateSystemSoundID((CFURLRef) CFBridgingRetain([NSURL fileURLWithPath:@"/Library/Application Support/Six/lock.caf"]), &sound);
@@ -103,7 +103,7 @@ static void setIsLocked(bool locked) {
 // Charge Sound
 %hook SBUIController
 -(void)playConnectedToPowerSoundIfNecessary {
-  if (enabled && chargeSound && self.isOnAC) {
+  if (chargeSound && self.isOnAC) {
     SystemSoundID sound = 0;
     AudioServicesDisposeSystemSoundID(sound);
     AudioServicesCreateSystemSoundID((CFURLRef) CFBridgingRetain([NSURL fileURLWithPath:@"/Library/Application Support/Six/connect_power.caf"]), &sound);
@@ -139,7 +139,7 @@ static void setIsLocked(bool locked) {
 }
 // Show Charging View
 - (void)_transitionChargingViewToVisible:(BOOL)arg1 showBattery:(BOOL)arg2 animated:(BOOL)arg3 {
-  if (enabled && chargeView) {
+  if (chargeView) {
     [mainPageView layoutSix];
   } else {
     %orig;
@@ -156,16 +156,12 @@ static void setIsLocked(bool locked) {
 %hook SBDashBoardPasscodeViewController
 - (void)viewWillAppear:(BOOL)arg1 {
   %orig;
-  if (enabled) {
     [mainPageView.sixController hideBars];
-  }
 }
 - (void)viewWillDisappear:(BOOL)arg1 {
   %orig;
-  if (enabled) {
     unlockAllowed = NO;
     [mainPageView.sixController showBars];
-  }
 }
 %end
 
@@ -219,7 +215,7 @@ static void setIsLocked(bool locked) {
 }
 %new
 - (void)layoutSix {
-  if (enabled && isLocked) {
+  if (isLocked) {
     if (!statusHeight) {
       statusHeight = [%c(UIStatusBar) _heightForStyle:306 orientation:1 forStatusBarFrame:NO];
       if (statusHeight == 0) {
@@ -316,7 +312,7 @@ static void setIsLocked(bool locked) {
 // Weird way to do this, I know. It was the only way I could get it to work.
 %hook SBDashBoardMainPageContentViewController
 - (void)aggregateAppearance:(SBDashBoardAppearance *)arg1 {
-  if (enabled && isLocked && !disableSlideBar) {
+  if (isLocked && !disableSlideBar) {
     SBDashBoardComponent *pageControl = [[%c(SBDashBoardComponent) pageControl] hidden:YES];
     [arg1 addComponent:pageControl];
     %orig(arg1);
@@ -335,7 +331,7 @@ static void setIsLocked(bool locked) {
 }
 %new
 - (void)layoutSix {
-  if (enabled && isLocked && !disableTimeBar) {
+  if (isLocked && !disableTimeBar) {
     self.hidden = YES;
     self.alpha = 0;
   } else {
@@ -354,7 +350,7 @@ static void setIsLocked(bool locked) {
 }
 %new
 - (void)layoutSix {
-  if (enabled && isLocked && !disableSlideBar) {
+  if (isLocked && !disableSlideBar) {
     self.scrollEnabled = NO;
   } else {
     self.scrollEnabled = YES;
@@ -372,7 +368,7 @@ static void setIsLocked(bool locked) {
 %new
 - (void)layoutSix {
   UIView *quickActions = MSHookIvar<UIView *>(self, "_quickActionsView");
-  if (enabled && isLocked && !disableSlideBar) {
+  if (isLocked && !disableSlideBar) {
     quickActions.hidden = YES;
     quickActions.alpha = 0;
   } else {
@@ -391,7 +387,7 @@ static void setIsLocked(bool locked) {
 }
 %new
 - (void)layoutSix {
-  if (enabled && isLocked && !disableTimeBar) {
+  if (isLocked && !disableTimeBar) {
     self.hidden = YES;
     self.alpha = 0;
   } else {
@@ -409,7 +405,7 @@ static void setIsLocked(bool locked) {
 }
 %new
 - (void)layoutSix {
-  if (enabled && isLocked && !disableTimeBar) {
+  if (isLocked && !disableTimeBar) {
     self.hidden = YES;
     self.alpha = 0;
   } else {
@@ -428,7 +424,7 @@ static void setIsLocked(bool locked) {
 }
 %new
 - (void)layoutSix {
-  if (enabled && isLocked && !disableSlideBar) {
+  if (isLocked && !disableSlideBar) {
     self.view.hidden = YES;
     self.view.alpha = 0;
   } else {
@@ -446,7 +442,7 @@ static void setIsLocked(bool locked) {
 }
 %new
 - (void)layoutSix {
-  if (enabled && isLocked && !disableSlideBar) {
+  if (isLocked && !disableSlideBar) {
     self.view.hidden = YES;
     self.view.alpha = 0;
   } else {
@@ -459,7 +455,7 @@ static void setIsLocked(bool locked) {
 // Disable Swipe Gesture
 %hook SBCoverSheetScreenEdgePanGestureRecognizer
 - (BOOL)isEnabled {
-  if (enabled && isLocked && !disableSlideBar) {
+  if (isLocked && !disableSlideBar) {
     return NO;
   } else {
     return %orig;
@@ -469,14 +465,14 @@ static void setIsLocked(bool locked) {
 
 %hook SBCoverSheetSlidingViewController
 - (void)_handleDismissGesture:(id)arg1 {
-    if (enabled && isLocked && !disableSlideBar) {
+    if (isLocked && !disableSlideBar) {
         return;
     }
     %orig;
 }
 // Disable Home Button
 - (void)setPresented:(BOOL)arg1 animated:(BOOL)arg2 withCompletion:(id)arg3 {
-  if (enabled && isLocked && disableHome && !arg1 && !unlockAllowed) {
+  if (isLocked && disableHome && !arg1 && !unlockAllowed) {
     return;
   }
   %orig;
@@ -497,7 +493,7 @@ static void setIsLocked(bool locked) {
       }
     }
   }
-  if (enabled && isLocked && disableHome && !unlockAllowed) {
+  if (isLocked && disableHome && !unlockAllowed) {
     return;
   }
   %orig;
@@ -515,14 +511,14 @@ static void setIsLocked(bool locked) {
 %hook NCNotificationListCollectionView
 - (UIEdgeInsets)adjustedContentInset {
   UIEdgeInsets inset = %orig;
-  if (enabled && isLocked && !classicNotifications && !disableTimeBar) {
+  if (isLocked && !classicNotifications && !disableTimeBar) {
     inset.top = statusHeight + 100;
   }
   return inset;
 }
 - (CGPoint)minimumContentOffset {
   CGPoint offset = %orig;
-  if (enabled && isLocked && !classicNotifications && !disableTimeBar) {
+  if (isLocked && !classicNotifications && !disableTimeBar) {
     offset.y = 0;
   }
   return offset;
@@ -534,7 +530,7 @@ static void setIsLocked(bool locked) {
 }
 %new
 - (void)layoutSix {
-  if (enabled && isLocked && classicNotifications) {
+  if (isLocked && classicNotifications) {
     self.hidden = YES;
   } else {
     self.hidden = NO;
@@ -574,5 +570,7 @@ static void displayStatusChanged(CFNotificationCenterRef center, void *observer,
 
   refreshPrefs();
 
+if (enabled) {
   %init(LockScreen);
+  }
 }
