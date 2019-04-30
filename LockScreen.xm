@@ -41,7 +41,7 @@ static void refreshPrefs() {
     settings = nil;
   }
   if (!settings) {
-  settings = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/xyz.skitty.sixls.plist"];
+    settings = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/xyz.skitty.sixls.plist"];
   }
 
   enabled = [([settings objectForKey:@"enabled"] ?: @(YES)) boolValue];
