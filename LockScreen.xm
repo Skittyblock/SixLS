@@ -572,7 +572,9 @@ static void displayStatusChanged(CFNotificationCenterRef center, void *observer,
   CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback) PreferencesChangedCallback, CFSTR("xyz.skitty.sixls.prefschanged"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
   CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, displayStatusChanged, CFSTR("com.apple.iokit.hid.displayStatus"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
 
-  refreshPrefs();
-
-  %init(LockScreen);
+    @autoreleasepool {
+        refreshPrefs();
+        
+        %init(LockScreen);
+    }
 }
