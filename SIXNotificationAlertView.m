@@ -3,6 +3,7 @@
 #import "SIXNotificationAlertView.h"
 
 @implementation SIXNotificationAlertView
+
 - (id)initWithRequest:(NCNotificationRequest *)request {
   self = [super init];
 
@@ -89,8 +90,8 @@
     UIGraphicsEndImageContext();
 
     [self.openSlider setThumbImage:icon forState:UIControlStateNormal];
-    [self.openSlider setMinimumTrackImage:[UIImage alloc] forState:UIControlStateNormal];
-    [self.openSlider setMaximumTrackImage:[UIImage alloc] forState:UIControlStateNormal];
+    [self.openSlider setMinimumTrackImage:[UIImage new] forState:UIControlStateNormal];
+    [self.openSlider setMaximumTrackImage:[UIImage new] forState:UIControlStateNormal];
 
     [self.openSlider addTarget:self action:@selector(showSlider) forControlEvents: UIControlEventTouchDown];
     [self.openSlider addTarget:self action:@selector(sliderStopped:) forControlEvents: UIControlEventTouchUpInside];
@@ -102,6 +103,7 @@
 
   return self;
 }
+
 - (void)showSlider {
   self.trackBackground.hidden = NO;
   [self.slideText show];
@@ -113,6 +115,7 @@
     self.messageLabel.alpha = 0;
   }];
 }
+
 - (void)hideSlider {
   [UIView animateWithDuration:0.2 animations:^{
     self.trackBackground.alpha = 0;
@@ -123,6 +126,7 @@
     [self.openSlider setValue:0 animated:NO];
   }];
 }
+
 - (void)sliderStopped:(UISlider *)slider {
   if (slider.value < 1) {
     [UIView animateWithDuration:0.2 animations:^{
@@ -133,10 +137,16 @@
     }];
   } else {
     // If you ever want to execute a notification action, this is what you do I guess:
-    [self.request.defaultAction.actionRunner executeAction:self.request.defaultAction fromOrigin:nil withParameters:nil completion:nil];
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] < 13.0) {
+      [self.request.defaultAction.actionRunner executeAction:self.request.defaultAction fromOrigin:nil withParameters:nil completion:nil];
+    } else {
+      [self.request.defaultAction.actionRunner executeAction:self.request.defaultAction fromOrigin:nil endpoint:nil withParameters:nil completion:nil];
+    }
   }
 }
+
 - (void)sliderMoved:(UISlider *)slider {
   self.slideText.alpha = 1 - slider.value * 3;
 }
+
 @end

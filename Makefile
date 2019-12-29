@@ -1,4 +1,8 @@
+#DEBUG = 0
+#FINALPACKAGE = 1
+
 ARCHS = arm64 arm64e
+TARGET = iphone:clang::11.0
 
 include $(THEOS)/makefiles/common.mk
 
@@ -8,7 +12,8 @@ SixLS_FILES = SIXNotificationAlertView.m SIXNotificationCell.m SIXLockScreenView
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 
-after-install::
-	install.exec "killall -9 SpringBoard"
 SUBPROJECTS += prefs
 include $(THEOS_MAKE_PATH)/aggregate.mk
+
+after-install::
+	install.exec "sbreload"

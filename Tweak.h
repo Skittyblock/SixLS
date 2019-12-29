@@ -34,6 +34,10 @@
 @property (assign,getter=isAuthenticated,nonatomic) BOOL authenticated;
 @end
 
+@interface CSCoverSheetViewController : UIViewController
+@property (assign,getter=isAuthenticated,nonatomic) BOOL authenticated;
+@end
+
 @interface SBLockScreenManager : NSObject
 @property (nonatomic, readonly) BOOL isUILocked;
 + (id)sharedInstance;
@@ -104,11 +108,26 @@
 - (void)updateFrames;
 @end
 
+@interface CSMainPageView : UIView
+@property (nonatomic, retain) UIImageView *wallpaperGradient;
+@property (nonatomic, retain) UIView *batteryView;
+@property (nonatomic, retain) UIImageView *batteryImage;
+@property (nonatomic, retain) SIXLockScreenViewController *sixController;
+@property (nonatomic, retain) SIXLockScreenView *sixView;
++ (id)sharedInstance;
+- (void)layoutSix;
+- (void)updateFrames;
+@end
+
 @interface SBFLockScreenDateView : UIView
 - (void)layoutSix;
 @end
 
 @interface SBDashBoardFixedFooterViewController : UIViewController
+- (void)layoutSix;
+@end
+
+@interface CSFixedFooterViewController : UIViewController
 - (void)layoutSix;
 @end
 
@@ -118,7 +137,12 @@
 
 @interface SBPagedScrollView : UIScrollView
 - (void)layoutSix;
--(BOOL)scrollToPageAtIndex:(unsigned long long)arg1 animated:(BOOL)arg2 withCompletion:(/*^block*/id)arg3;
+- (BOOL)scrollToPageAtIndex:(unsigned long long)arg1 animated:(BOOL)arg2 withCompletion:(/*^block*/id)arg3;
+@end
+
+@interface CSScrollView : UIScrollView
+- (void)layoutSix;
+- (BOOL)scrollToPageAtIndex:(unsigned long long)arg1 animated:(BOOL)arg2 withCompletion:(/*^block*/id)arg3;
 @end
 
 @interface SBDashBoardView : UIView
@@ -138,11 +162,11 @@
 - (void)layoutSix;
 - (UIGestureRecognizer*)dismissGestureRecognizer;
 @end
-
-@interface SBDashBoardTeachableMomentsContainerViewController : UIViewController
+/*
+@interface CSTeachableMomentsContainerViewController : UIViewController
 - (void)layoutSix;
 @end
-
+*/
 @interface SBFolderBackgroundView: UIView
 @end
 
@@ -160,47 +184,35 @@
 @end
 
 @protocol FBSceneClientProvider
-
 - (void)endTransaction;
 - (void)beginTransaction;
-
 @end
 
-
 @protocol FBSceneClient
-
 - (void)host:(id)arg1 didUpdateSettings:(id)arg2 withDiff:(id)arg3 transitionContext:(id)arg4 completion:(void (^)(BOOL))arg5;
-
 @end
 
 @interface FBSSceneSettings : NSObject <NSMutableCopying>
-
 @end
 
 @interface FBSMutableSceneSettings : FBSSceneSettings
-
-@property(nonatomic, getter=isBackgrounded) BOOL backgrounded;
-
+@property (nonatomic, getter=isBackgrounded) BOOL backgrounded;
 @end
 
 @interface FBSSettingsDiff : NSObject
 @end
 
 @interface FBSSceneSettingsDiff : FBSSettingsDiff
-
 + (id)diffFromSettings:(id)arg1 toSettings:(id)arg2;
-
 @end
 
 @interface FBSSystemService : NSObject
-
 + (id)sharedService;
 - (void)openApplication:(id)arg1 options:(id)arg2 withResult:(void (^)(void))arg3;
-
 @end
 
 @interface FBSceneHostWrapperView : UIView
--(id)initWithScene:(id)arg1 requester:(id)arg2 ;
+- (id)initWithScene:(id)arg1 requester:(id)arg2 ;
 @end
 
 @interface FBSceneHostManager : NSObject
@@ -226,7 +238,7 @@
 
 @interface SBApplication : NSObject
 @property(readonly, nonatomic) int pid;
--(FBScene*) mainScene;
+- (FBScene*) mainScene;
 - (void)activate;
 @end
 
@@ -269,7 +281,7 @@
 @end
 
 @interface SBIconListView : UIView
--(id)initWithModel:(id)arg1 orientation:(long long)arg2 viewMap:(id)arg3;
+- (id)initWithModel:(id)arg1 orientation:(long long)arg2 viewMap:(id)arg3;
 @end
 
 @interface SBRootIconListView : SBIconListView
@@ -325,6 +337,10 @@
 - (void)layoutSix;
 @end
 
+@interface NCNotificationListView : UIView
+- (void)layoutSix;
+@end
+
 @interface SBDashBoardComponent : NSObject
 + (id)pageControl;
 - (id)hidden:(bool)arg1;
@@ -344,7 +360,8 @@
 @end
 
 @interface NCNotificationActionRunner <NSObject>
--(void)executeAction:(id)arg1 fromOrigin:(id)arg2 withParameters:(id)arg3 completion:(/*^block*/id)arg4;
+- (void)executeAction:(id)arg1 fromOrigin:(id)arg2 withParameters:(id)arg3 completion:(/*^block*/id)arg4;
+- (void)executeAction:(id)arg1 fromOrigin:(id)arg2 endpoint:(id)arg3 withParameters:(id)arg4 completion:(/*^block*/id)arg5;
 @end
 
 @interface NCNotificationAction : NSObject
@@ -363,11 +380,19 @@
 @property (nonatomic,readonly) NCNotificationAction *defaultAction;
 @end
 
+@interface NCNotificationStructuredSectionList : NSObject
+@property (nonatomic, readonly) NSArray *allNotificationRequests;
+@end
+
+@interface NCNotificationMasterList : NSObject
+@property (nonatomic, retain) NCNotificationStructuredSectionList *incomingSectionList;
+@end
+
 @interface NCNotificationPriorityList
 @property (nonatomic,readonly) NSArray *allNotificationRequests;
 @end
 
 @interface NCNotificationCombinedListViewController : UIViewController
-@property (nonatomic, retain) NCNotificationPriorityList *notificationPriorityList;
+@property (nonatomic, retain) NCNotificationMasterList *notificationPriorityList;
 - (void)layoutSix;
 @end

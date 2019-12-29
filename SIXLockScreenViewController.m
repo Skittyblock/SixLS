@@ -90,8 +90,8 @@
 
     UIImage *thumbImage = [UIImage imageWithContentsOfFile:@"/Library/Application Support/Six/thumb.png"];
     [self.unlockSlider setThumbImage:thumbImage forState:UIControlStateNormal];
-    [self.unlockSlider setMinimumTrackImage:[UIImage alloc] forState:UIControlStateNormal];
-    [self.unlockSlider setMaximumTrackImage:[UIImage alloc] forState:UIControlStateNormal];
+    [self.unlockSlider setMinimumTrackImage:[UIImage new] forState:UIControlStateNormal];
+    [self.unlockSlider setMaximumTrackImage:[UIImage new] forState:UIControlStateNormal];
 
     [self.unlockSlider addTarget:self action:@selector(sliderStopped:) forControlEvents: UIControlEventTouchUpInside];
     [self.unlockSlider addTarget:self action:@selector(sliderStopped:) forControlEvents: UIControlEventTouchUpOutside];
@@ -104,7 +104,13 @@
     self.slideUpBackground.backgroundColor = [UIColor blackColor];
   }
 
-  if (self.notificationList.allNotificationRequests.count == 0) {
+  int requestCount;
+  if ([self.notificationList isKindOfClass:NSClassFromString(@"NCNotificationMasterList")]) {
+    requestCount = ((NCNotificationMasterList *)self.notificationList).incomingSectionList.allNotificationRequests.count;
+  } else {
+    requestCount = ((NCNotificationPriorityList *)self.notificationList).allNotificationRequests.count;
+  }
+  if (requestCount == 0) {
     if (self.notificationView) {
       [self.notificationView removeFromSuperview];
     }
@@ -150,12 +156,19 @@
   [self.trackBackground addSubview:self.slideText];
   [self.view addSubview:self.slideUpBackground];
 }
+
 - (void)updateViews {
   if (self.view.center.y != self.view.bounds.size.height / 2) {
     [self.view setCenter:CGPointMake(self.view.center.x, [UIScreen mainScreen].bounds.size.height / 2)];
   }
 
-  if (self.notificationList.allNotificationRequests.count == 0) {
+  int requestCount;
+  if ([self.notificationList isKindOfClass:NSClassFromString(@"NCNotificationMasterList")]) {
+    requestCount = ((NCNotificationMasterList *)self.notificationList).incomingSectionList.allNotificationRequests.count;
+  } else {
+    requestCount = ((NCNotificationPriorityList *)self.notificationList).allNotificationRequests.count;
+  }
+  if (requestCount == 0) {
     if (self.notificationView) {
       [self.notificationView removeFromSuperview];
     }
@@ -178,6 +191,7 @@
   // Hacky fix. Unfortunatly only works if layoutSix is called twice?
   self.slideText.layer.sublayers[0].sublayers[2].backgroundColor = [UIColor colorWithWhite:1 alpha:0.65].CGColor;
 }
+
 - (void)cameraDragged:(UIPanGestureRecognizer*)sender {
   if ( isiPad ) {
     return;
@@ -207,6 +221,7 @@
     }];
   }
 }
+
 - (void)cameraTapped:(UITapGestureRecognizer*)sender {
   if ( isiPad ) {
     return;
@@ -221,6 +236,7 @@
     }];
   }
 }
+
 - (void)updateTime {
   NSDate *now = [NSDate date];
   NSDateFormatter *timeFormat = [[NSDateFormatter alloc] init];
@@ -234,6 +250,7 @@
   self.timeLabel.text = [timeFormat stringFromDate:now];
   self.dateLabel.text = [dateFormat stringFromDate:now];
 }
+
 - (void)sliderStopped:(UISlider *)slider {
   if (slider.value < 1) {
     [UIView animateWithDuration:0.1 animations:^{
@@ -244,9 +261,11 @@
     [[NSClassFromString(@"SBLockScreenManager") sharedInstance] lockScreenViewControllerRequestsUnlock];
   }
 }
+
 - (void)sliderMoved:(UISlider *)slider {
   self.slideText.alpha = 1 - slider.value * 3;
 }
+
 - (void)hideBars {
   if (self.topBar.frame.origin.y == self.statusBarHeight) {
     [UIView animateWithDuration:0.3 animations:^{
@@ -267,6 +286,7 @@
     }];
   }
 }
+
 - (void)showBars {
   if (self.topBar.frame.origin.y == -100) {
     [self.unlockSlider setValue:0 animated:NO];
@@ -357,7 +377,13 @@
   }
 
   if (self.useNotifications) {
-    if (self.notificationList.allNotificationRequests.count > 0) {
+    int requestCount;
+    if ([self.notificationList isKindOfClass:NSClassFromString(@"NCNotificationMasterList")]) {
+      requestCount = ((NCNotificationMasterList *)self.notificationList).incomingSectionList.allNotificationRequests.count;
+    } else {
+      requestCount = ((NCNotificationPriorityList *)self.notificationList).allNotificationRequests.count;
+    }
+    if (requestCount > 0) {
       [self showNotificationTable];
       if (self.notificationView) {
         [self.notificationView removeFromSuperview];
@@ -376,6 +402,7 @@
     [self.view addSubview:self.notificationView];
   }
 }
+
 - (void)removeNotificationRequest:(NCNotificationRequest *)request {
   bool remove = false;
   if (self.notificationRequests.count > 0) {
@@ -393,4 +420,10 @@
     }
   }
 }
+
+// iOS 13 fix. Thanks Ayden!
+- (BOOL)_canShowWhileLocked {
+  return YES;
+}
+
 @end
