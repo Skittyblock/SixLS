@@ -149,6 +149,10 @@
 - (void)layoutSix;
 @end
 
+@interface CSCoverSheetView : UIView
+- (void)layoutSix;
+@end
+
 @interface SBUIProudLockIconView : UIView
 - (void)layoutSix;
 @end
@@ -162,11 +166,15 @@
 - (void)layoutSix;
 - (UIGestureRecognizer*)dismissGestureRecognizer;
 @end
-/*
+
+@interface SBTeachableMomentsContainerViewController : UIViewController
+- (void)layoutSix;
+@end
+
 @interface CSTeachableMomentsContainerViewController : UIViewController
 - (void)layoutSix;
 @end
-*/
+
 @interface SBFolderBackgroundView: UIView
 @end
 

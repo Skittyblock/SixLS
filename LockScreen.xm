@@ -153,26 +153,6 @@ static void setIsLocked(bool locked) {
 }
 %end
 
-// Hide Quick Actions
-%hook SBDashBoardView
-- (void)layoutSubviews {
-  %orig;
-  [viewsToLayout addObject:self];
-  [self layoutSix];
-}
-%new
-- (void)layoutSix {
-  UIView *quickActions = MSHookIvar<UIView *>(self, "_quickActionsView");
-  if (enabled && isLocked && !disableSlideBar) {
-    quickActions.hidden = YES;
-    quickActions.alpha = 0;
-  } else {
-    quickActions.hidden = NO;
-    quickActions.alpha = 1;
-  }
-}
-%end
-
 // Hide Big Lock Icon
 %hook SBUIProudLockIconView
 - (void)layoutSubviews {
@@ -209,26 +189,7 @@ static void setIsLocked(bool locked) {
   }
 }
 %end
-/*
-// Uhh... what is this again?
-%hook CSTeachableMomentsContainerViewController
-- (void)viewDidLoad {
-  %orig;
-  [viewsToLayout addObject:self];
-  [self layoutSix];
-}
-%new
-- (void)layoutSix {
-  if (enabled && isLocked && !disableSlideBar) {
-    self.view.hidden = YES;
-    self.view.alpha = 0;
-  } else {
-    self.view.hidden = NO;
-    self.view.alpha = 1;
-  }
-}
-%end
-*/
+
 // Disable Swipe Gesture
 %hook SBCoverSheetScreenEdgePanGestureRecognizer
 - (BOOL)isEnabled {
@@ -531,6 +492,45 @@ static void setIsLocked(bool locked) {
 }
 %end
 
+// Hide Quick Actions
+%hook SBDashBoardView
+- (void)layoutSubviews {
+  %orig;
+  [viewsToLayout addObject:self];
+  [self layoutSix];
+}
+%new
+- (void)layoutSix {
+  UIView *quickActions = MSHookIvar<UIView *>(self, "_quickActionsView");
+  if (enabled && isLocked && !disableSlideBar) {
+    quickActions.hidden = YES;
+    quickActions.alpha = 0;
+  } else {
+    quickActions.hidden = NO;
+    quickActions.alpha = 1;
+  }
+}
+%end
+
+// Hide pill view
+%hook SBTeachableMomentsContainerViewController
+- (void)viewDidLoad {
+  %orig;
+  [viewsToLayout addObject:self];
+  [self layoutSix];
+}
+%new
+- (void)layoutSix {
+  if (enabled && isLocked && !disableSlideBar) {
+    self.view.hidden = YES;
+    self.view.alpha = 0;
+  } else {
+    self.view.hidden = NO;
+    self.view.alpha = 1;
+  }
+}
+%end
+
 // Move Notifications
 %hook NCNotificationListCollectionView
 - (UIEdgeInsets)adjustedContentInset {
@@ -773,6 +773,45 @@ static void setIsLocked(bool locked) {
 
 // Hide Home Bar, Swipe to Unlock, etc.
 %hook CSFixedFooterViewController
+- (void)viewDidLoad {
+  %orig;
+  [viewsToLayout addObject:self];
+  [self layoutSix];
+}
+%new
+- (void)layoutSix {
+  if (enabled && isLocked && !disableSlideBar) {
+    self.view.hidden = YES;
+    self.view.alpha = 0;
+  } else {
+    self.view.hidden = NO;
+    self.view.alpha = 1;
+  }
+}
+%end
+
+// Hide Quick Actions
+%hook CSCoverSheetView
+- (void)layoutSubviews {
+  %orig;
+  [viewsToLayout addObject:self];
+  [self layoutSix];
+}
+%new
+- (void)layoutSix {
+  UIView *quickActions = MSHookIvar<UIView *>(self, "_quickActionsView");
+  if (enabled && isLocked && !disableSlideBar) {
+    quickActions.hidden = YES;
+    quickActions.alpha = 0;
+  } else {
+    quickActions.hidden = NO;
+    quickActions.alpha = 1;
+  }
+}
+%end
+
+// Hide pill view
+%hook CSTeachableMomentsContainerViewController
 - (void)viewDidLoad {
   %orig;
   [viewsToLayout addObject:self];
