@@ -301,6 +301,7 @@ static void setIsLocked(bool locked) {
 - (void)viewWillAppear:(BOOL)arg1 {
   %orig;
   if (enabled) {
+    unlockAllowed = YES;
     [mainPageView.sixController hideBars];
   }
 }
