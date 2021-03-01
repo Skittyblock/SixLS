@@ -9,7 +9,7 @@
 		<key>cell</key>
 		<string>PSLinkCell</string>
 		<key>detail</key>
-		<string>SIXRootListController</string>
+		<string>SLSSettingsController</string>
 		<key>icon</key>
 		<string>icon.png</string>
 		<key>isController</key>

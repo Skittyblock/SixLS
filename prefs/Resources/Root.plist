@@ -2,18 +2,18 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>name</key>
+	<string>Six (LS)</string>
+	<key>subtitle</key>
+	<string>By Skitty</string>
+	<key>headerColor</key>
+	<string>#c04757</string>
+	<key>textColor</key>
+	<string>#ffffff</string>
+	<key>subtitleTextColor</key>
+	<string>#ffffffa0</string>
 	<key>items</key>
 	<array>
-		<dict>
-			<key>cell</key>
-			<string>PSGroupCell</string>
-			<key>footerCellClass</key>
-			<string>SIXHeader</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSGroupCell</string>
-		</dict>
 		<dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>
@@ -48,6 +48,20 @@
 			<key>PostNotification</key>
 			<string>xyz.skitty.sixls.prefschanged</string>
 			<key>key</key>
+			<string>militaryTime</string>
+			<key>label</key>
+			<string>24 Hour Time</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>xyz.skitty.sixls</string>
+			<key>PostNotification</key>
+			<string>xyz.skitty.sixls.prefschanged</string>
+			<key>key</key>
 			<string>disableHome</string>
 			<key>label</key>
 			<string>Disable Home Button</string>
@@ -62,9 +76,29 @@
 			<key>PostNotification</key>
 			<string>xyz.skitty.sixls.prefschanged</string>
 			<key>key</key>
-			<string>militaryTime</string>
+			<string>disableTimeBar</string>
 			<key>label</key>
-			<string>24 Hour Time</string>
+			<string>Disable Time Bar</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>xyz.skitty.sixls</string>
+			<key>PostNotification</key>
+			<string>xyz.skitty.sixls.prefschanged</string>
+			<key>key</key>
+			<string>disableSlideBar</string>
+			<key>label</key>
+			<string>Disable Slide Bar</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Sounds</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -110,34 +144,6 @@
 		</dict>
 		<dict>
 			<key>cell</key>
-			<string>PSSwitchCell</string>
-			<key>default</key>
-			<false/>
-			<key>defaults</key>
-			<string>xyz.skitty.sixls</string>
-			<key>PostNotification</key>
-			<string>xyz.skitty.sixls.prefschanged</string>
-			<key>key</key>
-			<string>disableTimeBar</string>
-			<key>label</key>
-			<string>Disable Time Bar</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSSwitchCell</string>
-			<key>default</key>
-			<false/>
-			<key>defaults</key>
-			<string>xyz.skitty.sixls</string>
-			<key>PostNotification</key>
-			<string>xyz.skitty.sixls.prefschanged</string>
-			<key>key</key>
-			<string>disableSlideBar</string>
-			<key>label</key>
-			<string>Disable Slide Bar</string>
-		</dict>
-		<dict>
-			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
 			<string>Looks</string>
@@ -168,9 +174,9 @@
 			<key>PostNotification</key>
 			<string>xyz.skitty.sixls.prefschanged</string>
 			<key>key</key>
-			<string>chargeView</string>
+			<string>wallpaperGradient</string>
 			<key>label</key>
-			<string>Charging View</string>
+			<string>Wallpaper Shadow</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -182,15 +188,9 @@
 			<key>PostNotification</key>
 			<string>xyz.skitty.sixls.prefschanged</string>
 			<key>key</key>
-			<string>wallpaperGradient</string>
+			<string>chargeView</string>
 			<key>label</key>
-			<string>Wallpaper Shadow</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSGroupCell</string>
-			<key>label</key>
-			<string>Notifications</string>
+			<string>Charging View</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -208,17 +208,17 @@
 		</dict>
 		<dict>
 			<key>cell</key>
-			<string>PSSwitchCell</string>
-			<key>default</key>
-			<false/>
-			<key>defaults</key>
-			<string>xyz.skitty.sixls</string>
-			<key>PostNotification</key>
-			<string>xyz.skitty.sixls.prefschanged</string>
-			<key>key</key>
-			<string>modernTime</string>
+			<string>PSGroupCell</string>
+		</dict>
+		<dict>
+			<key>cellClass</key>
+			<string>SPCreditCell</string>
 			<key>label</key>
-			<string>Modern Time</string>
+			<string>Skitty</string>
+			<key>twitter</key>
+			<string>Skittyblock</string>
+			<key>subtitle</key>
+			<string>Developer</string>
 		</dict>
 	</array>
 	<key>title</key>
