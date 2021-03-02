@@ -19,6 +19,8 @@ class NotificationCell: UITableViewCell {
     private var topSeparator: UIView
     private var bottomSeparator: UIView
 
+    let timeFormatter = DateFormatter()
+
     init(request: NCNotificationRequest) {
         self.request = request
 
@@ -50,10 +52,23 @@ class NotificationCell: UITableViewCell {
         addSubview(bottomSeparator)
 
         activateConstraints()
+        updateTimeFormat()
+
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(updateTimeFormat),
+                                               name: Notification.Name("observePreferences"),
+                                               object: nil)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    @objc func updateTimeFormat() {
+        timeFormatter.dateFormat = SixLSManager.sharedInstance()?.militaryTime ?? false ? "HH:mm" : "h:mm a"
+        if let date = request.content.date {
+            dateLabel.text = timeFormatter.string(from: date)
+        }
     }
 
     func configureViews() {
@@ -74,9 +89,7 @@ class NotificationCell: UITableViewCell {
 
         var notificationDate = ""
         if let date = request.content.date {
-            let formatter = DateFormatter()
-            formatter.dateFormat = "h:mm a"
-            notificationDate = formatter.string(from: date)
+            notificationDate = timeFormatter.string(from: date)
         }
 
         dateLabel.text = notificationDate
