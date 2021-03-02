@@ -35,10 +35,31 @@ import UIKit
         }
     }
 
-    private var statusBarHeight = CGFloat(UIStatusBar._height(forStyle: 306,
-                                                              orientation: 1,
-                                                              forStatusBarFrame: false,
-                                                              inWindow: nil))
+    private var statusBarHeight: CGFloat {
+        var height: CGFloat = 0
+        if #available(iOS 14.0, *) {
+            height = CGFloat(UIStatusBar._height(forStyle: 306,
+                                                 orientation: 1,
+                                                 forStatusBarFrame: false,
+                                                 inWindow: nil))
+            if height <= 0 {
+                height = CGFloat(UIStatusBar_Modern._height(forStyle: 1,
+                                                            orientation: 1,
+                                                            forStatusBarFrame: false,
+                                                            inWindow: nil))
+            }
+        } else {
+            height = CGFloat(UIStatusBar._height(forStyle: 306,
+                                                 orientation: 1,
+                                                 forStatusBarFrame: false))
+            if height <= 0 {
+                height = CGFloat(UIStatusBar_Modern._height(forStyle: 1,
+                                                            orientation: 1,
+                                                            forStatusBarFrame: false))
+            }
+        }
+        return height
+    }
 
     var hideTopBar: Bool? {
         didSet {
@@ -59,14 +80,6 @@ import UIKit
     var useChargingView = true
 
     override init(frame: CGRect) {
-        // notched device status bar height
-        if statusBarHeight <= 0 {
-            statusBarHeight = CGFloat(UIStatusBar_Modern._height(forStyle: 1,
-                                                                 orientation: 1,
-                                                                 forStatusBarFrame: false,
-                                                                 inWindow: nil))
-        }
-
         statusBarBackground = UIView()
         dateView = DateBarView()
         lockView = LockBarView()
@@ -211,27 +224,11 @@ import UIKit
             notificationTableView.isHidden = false
             notificationAlertView.isHidden = true
             notificationTableView.reloadData()
-
-            // let request = notifications[count - 1]
-            // let cell = NotificationCell(request: request)
-            // notificationTableView.beginUpdates()
-            // notificationTableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .none)
-            // notificationTableView.endUpdates()
-
-            // notificationTableView.performBatchUpdates {
-            //     notificationTableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .none)
-            // }
         } else if count == 1 {
             notificationAlertView.request = notifications[0]
             notificationTableView.isHidden = true
             notificationAlertView.isHidden = false
             notificationTableView.reloadData()
-
-            // notificationTableView.beginUpdates()
-            // notificationTableView.performBatchUpdates {
-            //     notificationTableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .none)
-            // }
-            // notificationTableView.endUpdates()
         } else {
             notificationTableView.isHidden = true
             notificationAlertView.isHidden = true
@@ -239,9 +236,6 @@ import UIKit
     }
 
     @objc func addNotification(_ request: NCNotificationRequest) {
-        // if notifications == nil {
-        //     notifications = []
-        // }
         notifications.append(request)
         reloadNotifications()
     }
@@ -256,7 +250,6 @@ import UIKit
     @objc func dismiss() {
         UIView.animate(withDuration: 0.3, animations: {
             // self.alpha = 0
-
             var dateFrame = self.dateView.frame
             var lockFrame = self.lockView.frame
             dateFrame.origin.y -= 100 + self.statusBarHeight
