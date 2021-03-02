@@ -9,8 +9,8 @@
 import UIKit
 
 @objc protocol LockBarViewDelegate {
-    func sliderStopped(_ slider: UISlider)
-    func sliderMoved(_ slider: UISlider)
-    func cameraTapped(_ gesture: UITapGestureRecognizer)
-    func cameraDragged(_ gesture: UIPanGestureRecognizer)
+	func sliderStopped(_ slider: UISlider)
+	func sliderMoved(_ slider: UISlider)
+	func cameraTapped(_ gesture: UITapGestureRecognizer)
+	func cameraDragged(_ gesture: UIPanGestureRecognizer)
 }
