@@ -76,6 +76,7 @@ import UIKit
 			lockView.unlockSlider.glintyTextView.text = unlockText ?? "Slide to Unlock"
 		}
 	}
+	var timeBarDisabled = false
 	var useNotifications = true
 	var useChargingView = true
 
@@ -189,6 +190,20 @@ import UIKit
 		notificationTableView.bottomAnchor.constraint(equalTo: lockView.topAnchor).isActive = true
 	}
 
+	override public func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+		if !useNotifications {
+			let frame = CGRect(x: 0,
+							   y: timeBarDisabled ? 0 : statusBarHeight + 95,
+							   width: bounds.size.width,
+							   height: bounds.size.height - (timeBarDisabled ? 95 : statusBarHeight + 190))
+			if frame.contains(point) {
+				return false
+			}
+		}
+
+		return true
+	}
+
 	@objc func observePreferences() {
 		let manager = SixLSManager.sharedInstance()
 		statusBarBackground.isHidden = manager?.disableDateBar ?? false
@@ -197,6 +212,7 @@ import UIKit
 		wallpaperGradient.isHidden = manager?.disableWallpaperShadow ?? false
 		lockView.unlockSlider.text = manager?.unlockText ?? "slide to unlock"
 		dateView.timeFormatter.dateFormat = manager?.militaryTime ?? false ? "HH:mm" : "h:mm"
+		timeBarDisabled = manager?.disableDateBar ?? false
 		useChargingView = !(manager?.disableChargingView ?? false)
 		useNotifications = !(manager?.disableClassicNotifications ?? false)
 		updateChargingState()

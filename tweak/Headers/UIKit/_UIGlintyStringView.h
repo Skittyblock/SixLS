@@ -5,4 +5,5 @@
 - (void)setChevronStyle:(int)style;
 - (void)show;
 - (void)hide;
+- (void)updateText;
 @end

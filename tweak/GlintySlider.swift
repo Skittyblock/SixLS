@@ -28,6 +28,8 @@ class GlintySlider: UIView {
 	var text: String? {
 		didSet {
 			glintyTextView.text = text
+			glintyTextView.updateText()
+			fixTextColor()
 		}
 	}
 	var font: UIFont? {
@@ -79,14 +81,7 @@ class GlintySlider: UIView {
 
 		activateConstraints()
 
-		// Fix glinty text color
-		// todo: find a better way to do this
-		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-			let sublayers = self.glintyTextView.layer.sublayers?.first?.sublayers
-			let index = sublayers?.index(sublayers!.startIndex, offsetBy: 2) ?? 0
-			self.glintyTextView.layer.sublayers?.first?.sublayers?[index].backgroundColor = UIColor(white: 1,
-																									alpha: 0.65).cgColor
-		}
+		fixTextColor()
 	}
 
 	required init?(coder: NSCoder) {
@@ -109,5 +104,20 @@ class GlintySlider: UIView {
 		textXConstraint = glintyTextView.centerXAnchor.constraint(equalTo: centerXAnchor)
 		knobYConstraint?.isActive = true
 		textXConstraint?.isActive = true
+	}
+
+	override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+		fixTextColor()
+	}
+
+	// Fix glinty text color
+	// todo: find a better way to do this
+	func fixTextColor() {
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+			let sublayers = self.glintyTextView.layer.sublayers?.first?.sublayers
+			let index = sublayers?.index(sublayers!.startIndex, offsetBy: 2) ?? 0
+			self.glintyTextView.layer.sublayers?.first?.sublayers?[index].backgroundColor = UIColor(white: 1,
+																									alpha: 0.65).cgColor
+		}
 	}
 }
