@@ -9,15 +9,18 @@
 import UIKit
 
 @objc public class LockScreenView: UIView {
-	var statusBarBackground: UIView
-	var dateView: DateBarView
-	var lockView: LockBarView
-	var chargingView: ChargingView
-	var wallpaperGradient: UIImageView
-	var fakeCameraBackground: UIView
+	let statusBarBackground = UIView()
+	let dateView = DateBarView()
+	let lockView = LockBarView()
+	let chargingView = ChargingView()
+	let nowPlayingView = NowPlayingArtView()
+	let wallpaperGradient = UIImageView()
+	let fakeCameraBackground = UIView()
 
-	var notificationAlertView: NotificationAlertView
-	var notificationTableView: UITableView
+	var dateViewHeightConstraint: NSLayoutConstraint?
+
+	let notificationAlertView = NotificationAlertView(request: nil)
+	let notificationTableView = UITableView(frame: .zero, style: .plain)
 
 	@objc var notificationList: NCNotificationStructuredSectionList? {
 		didSet {
@@ -81,15 +84,6 @@ import UIKit
 	var useChargingView = true
 
 	override init(frame: CGRect) {
-		statusBarBackground = UIView()
-		dateView = DateBarView()
-		lockView = LockBarView()
-		chargingView = ChargingView()
-		wallpaperGradient = UIImageView()
-		fakeCameraBackground = UIView()
-		notificationAlertView = NotificationAlertView(request: nil)
-		notificationTableView = UITableView(frame: .zero, style: .plain)
-
 		super.init(frame: frame)
 
 		configureViews()
@@ -101,8 +95,9 @@ import UIKit
 		notificationTableView.estimatedRowHeight = 47
 		notificationTableView.rowHeight = UITableView.automaticDimension
 
-		addSubview(chargingView)
 		addSubview(wallpaperGradient)
+		addSubview(chargingView)
+		addSubview(nowPlayingView)
 		addSubview(dateView)
 		addSubview(lockView)
 		addSubview(fakeCameraBackground)
@@ -116,6 +111,10 @@ import UIKit
 		NotificationCenter.default.addObserver(self,
 											   selector: #selector(observePreferences),
 											   name: Notification.Name("observePreferences"),
+											   object: nil)
+		NotificationCenter.default.addObserver(self,
+											   selector: #selector(updatePlayingState),
+											   name: Notification.Name("nowPlayingUpdate"),
 											   object: nil)
 	}
 
@@ -132,6 +131,9 @@ import UIKit
 
 		chargingView.isHidden = true
 		chargingView.translatesAutoresizingMaskIntoConstraints = false
+
+		nowPlayingView.isHidden = true
+		nowPlayingView.translatesAutoresizingMaskIntoConstraints = false
 
 		wallpaperGradient.image = UIImage.forSix(named: "sb")
 		wallpaperGradient.contentMode = .scaleToFill
@@ -157,7 +159,8 @@ import UIKit
 		dateView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
 		dateView.topAnchor.constraint(equalTo: topAnchor, constant: statusBarHeight).isActive = true
 		dateView.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
-		dateView.heightAnchor.constraint(equalToConstant: 95).isActive = true
+		dateViewHeightConstraint = dateView.heightAnchor.constraint(equalToConstant: 95)
+		dateViewHeightConstraint?.isActive = true
 
 		lockView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
 		lockView.topAnchor.constraint(equalTo: bottomAnchor, constant: -95).isActive = true
@@ -166,6 +169,9 @@ import UIKit
 
 		chargingView.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
 		chargingView.heightAnchor.constraint(equalTo: heightAnchor).isActive = true
+
+		nowPlayingView.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
+		nowPlayingView.heightAnchor.constraint(equalTo: heightAnchor).isActive = true
 
 		wallpaperGradient.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
 		wallpaperGradient.heightAnchor.constraint(equalTo: heightAnchor).isActive = true
@@ -218,6 +224,25 @@ import UIKit
 		updateChargingState()
 	}
 
+	@objc func updatePlayingState(_ notification: NSNotification) {
+		if let notificationInfo = notification.userInfo {
+			let info = [
+				"artist": "Artist",
+				"song": "Song Title",
+				"album": "Album"
+			]
+			dateView.nowPlayingInfo = info
+			dateView.isPlaying = true
+			dateViewHeightConstraint?.constant = 133
+			nowPlayingView.isHidden = false
+			// nowPlayingView.artworkImageView.image = nil
+		} else {
+			dateView.isPlaying = false
+			dateViewHeightConstraint?.constant = 95
+			nowPlayingView.isHidden = true
+		}
+	}
+
 	@objc func updateChargingState() {
 		if useChargingView {
 			chargingView.isHidden = UIDevice.current.batteryState != .charging
@@ -226,46 +251,8 @@ import UIKit
 			chargingView.isHidden = true
 		}
 	}
-
-	func reloadNotifications() {
-		guard useNotifications else {
-			notificationTableView.isHidden = true
-			notificationAlertView.isHidden = true
-			return
-		}
-
-		let count = notifications.count // notificationList?.allNotificationRequests.count ?? 0
-
-		if count > 1 {
-			notificationTableView.isHidden = false
-			notificationAlertView.isHidden = true
-			notificationTableView.reloadData()
-		} else if count == 1 {
-			notificationAlertView.request = notifications[0]
-			notificationTableView.isHidden = true
-			notificationAlertView.isHidden = false
-			notificationTableView.reloadData()
-		} else {
-			notificationTableView.isHidden = true
-			notificationAlertView.isHidden = true
-		}
-	}
-
-	@objc func addNotification(_ request: NCNotificationRequest) {
-		notifications.append(request)
-		reloadNotifications()
-	}
-
-	@objc func removeNotification(_ request: NCNotificationRequest) {
-		if let index = notifications.firstIndex(of: request) {
-			notifications.remove(at: index)
-			reloadNotifications()
-		}
-	}
-
 	@objc func dismiss() {
 		UIView.animate(withDuration: 0.3, animations: {
-			// self.alpha = 0
 			var dateFrame = self.dateView.frame
 			var lockFrame = self.lockView.frame
 			dateFrame.origin.y -= 100 + self.statusBarHeight
@@ -296,6 +283,42 @@ import UIKit
 
 	@objc func unlock() {
 		SixLSManager.sharedInstance().unlock()
+	}
+}
+
+extension LockScreenView {
+	func reloadNotifications() {
+		guard useNotifications else {
+			notificationTableView.isHidden = true
+			notificationAlertView.isHidden = true
+			return
+		}
+
+		if notifications.count > 1 {
+			notificationTableView.isHidden = false
+			notificationAlertView.isHidden = true
+			notificationTableView.reloadData()
+		} else if notifications.count == 1 {
+			notificationAlertView.request = notifications[0]
+			notificationTableView.isHidden = true
+			notificationAlertView.isHidden = false
+			notificationTableView.reloadData()
+		} else {
+			notificationTableView.isHidden = true
+			notificationAlertView.isHidden = true
+		}
+	}
+
+	@objc func addNotification(_ request: NCNotificationRequest) {
+		notifications.insert(request, at: 0)
+		reloadNotifications()
+	}
+
+	@objc func removeNotification(_ request: NCNotificationRequest) {
+		if let index = notifications.firstIndex(of: request) {
+			notifications.remove(at: index)
+			reloadNotifications()
+		}
 	}
 }
 
@@ -341,11 +364,7 @@ extension LockScreenView: LockBarViewDelegate {
 		if gesture.state == .ended || gesture.state == .cancelled { // todo: momentum
 			let openCamera = !(self.center.y + self.bounds.height / 2 > self.bounds.height / 2 + 95)
 			UIView.animate(withDuration: 0.4, animations: {
-				if openCamera {
-					self.center = CGPoint(x: self.center.x, y: -self.bounds.height / 2)
-				} else {
-					self.center = CGPoint(x: self.center.x, y: self.bounds.height / 2)
-				}
+				self.center = CGPoint(x: self.center.x, y: openCamera ? -self.bounds.height / 2 : self.bounds.height / 2)
 			}, completion: { _ in
 				if openCamera {
 					SixLSManager.sharedInstance().openCamera()

@@ -387,8 +387,8 @@ static void setIsLocked(BOOL locked) {
 
 	if ([self respondsToSelector:@selector(incomingSectionList)]) {
 		mainPageController.sixView.notificationList = telf.incomingSectionList;
-	} else if ([self respondsToSelector:@selector(allNotificationRequests)]) {
-		mainPageController.sixView.notifications = [self allNotificationRequests];
+	} else {
+		[mainPageController.sixView addNotification:request];
 	}
 
 	return result;
@@ -531,6 +531,18 @@ static void setIsLocked(BOOL locked) {
 }
 
 %end
+
+%end
+
+// Music Player
+%hook SBMediaController
+
+- (void)setNowPlayingInfo:(id)info {
+	%orig;
+
+	// get now playing info
+	// [[NSNotificationCenter defaultCenter] postNotificationName:@"nowPlayingUpdate" object:nil userInfo:@{@"kMRMediaRemoteNowPlayingInfoTitle": @""}];
+}
 
 %end
 
