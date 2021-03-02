@@ -25,6 +25,7 @@ static BOOL unlockSound;
 static BOOL chargeSound;
 static BOOL disableTimeBar;
 static BOOL disableSlideBar;
+static BOOL disableIconFlyIn;
 
 static BOOL isLocked = YES;
 static BOOL unlockAllowed = NO;
@@ -57,6 +58,7 @@ static void refreshPrefs() {
 	chargeSound = [([settings objectForKey:@"chargeSound"] ?: @(YES)) boolValue];
 	disableTimeBar = [([settings objectForKey:@"disableTimeBar"] ?: @(NO)) boolValue];
 	disableSlideBar = [([settings objectForKey:@"disableSlideBar"] ?: @(NO)) boolValue];
+	disableIconFlyIn = [([settings objectForKey:@"disableIconFlyIn"] ?: @(NO)) boolValue];
 
 	if ([slideText isEqualToString:@""]) slideText = @"slide to unlock";
 
@@ -417,6 +419,15 @@ static void setIsLocked(BOOL locked) {
 
 %end
 
+// Experimental
+%hook CSCoverSheetTransitionSettings // SBCoverSheetTransitionSettings
+
+- (BOOL)iconsFlyIn {
+	return !disableIconFlyIn;
+}
+
+%end
+
 // Notched device hooks
 %group Notched
 
@@ -549,8 +560,10 @@ static void displayStatusChanged(CFNotificationCenterRef center, void *observer,
 	NSString *SixLSNotificationAlertView = @"SixLS.NotificationAlertView";
 	NSString *SixLSNotificationCell = @"SixLS.NotificationCell";
 
+	NSString *CSCoverSheetTransitionSettings = isLegacy ? @"SBCoverSheetTransitionSettings" : @"CSCoverSheetTransitionSettings";
+
 	NSString *CSTeachableMomentsContainerViewController = isLegacy ? @"SBTeachableMomentsContainerViewController" : @"CSTeachableMomentsContainerViewController";
 
-	%init(CSCoverSheetViewController=NSClassFromString(CSCoverSheetViewController), CSMainPageContentViewController=NSClassFromString(CSMainPageContentViewController), CSPasscodeViewController=NSClassFromString(CSPasscodeViewController), CSFixedFooterViewController=NSClassFromString(CSFixedFooterViewController), SBFLockScreenDateViewController=NSClassFromString(SBFLockScreenDateViewController), CSModalPresentationViewController=NSClassFromString(CSModalPresentationViewController), NCNotificationStructuredListViewController=NSClassFromString(NCNotificationStructuredListViewController), NCNotificationMasterList=NSClassFromString(NCNotificationMasterList), SixLSNotificationAlertView=NSClassFromString(SixLSNotificationAlertView), SixLSNotificationCell=NSClassFromString(SixLSNotificationCell));
+	%init(CSCoverSheetViewController=NSClassFromString(CSCoverSheetViewController), CSMainPageContentViewController=NSClassFromString(CSMainPageContentViewController), CSPasscodeViewController=NSClassFromString(CSPasscodeViewController), CSFixedFooterViewController=NSClassFromString(CSFixedFooterViewController), SBFLockScreenDateViewController=NSClassFromString(SBFLockScreenDateViewController), CSModalPresentationViewController=NSClassFromString(CSModalPresentationViewController), NCNotificationStructuredListViewController=NSClassFromString(NCNotificationStructuredListViewController), NCNotificationMasterList=NSClassFromString(NCNotificationMasterList), SixLSNotificationAlertView=NSClassFromString(SixLSNotificationAlertView), SixLSNotificationCell=NSClassFromString(SixLSNotificationCell), CSCoverSheetTransitionSettings=NSClassFromString(CSCoverSheetTransitionSettings));
 	%init(Notched, CSCoverSheetViewController=NSClassFromString(CSCoverSheetViewController), CSTeachableMomentsContainerViewController=NSClassFromString(CSTeachableMomentsContainerViewController));
 }
