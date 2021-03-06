@@ -8,7 +8,7 @@
 
 import UIKit
 
-class GlintySlider: UIView {
+final class GlintySlider: UIView {
 	var track: UIImageView
 	var uiSlider: UISlider
 	var glintyTextView: _UIGlintyStringView

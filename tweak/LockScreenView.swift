@@ -8,7 +8,7 @@
 
 import UIKit
 
-@objc public class LockScreenView: UIView {
+@objc final public class LockScreenView: UIView {
 	let statusBarBackground = UIView()
 	let dateView = DateBarView()
 	let lockView = LockBarView()

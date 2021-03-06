@@ -8,7 +8,7 @@
 
 import UIKit
 
-class NotificationAlertView: UIView {
+final class NotificationAlertView: UIView {
 	var request: NCNotificationRequest? {
 		didSet {
 			titleLabel.text = request?.content.title ?? request?.content.header

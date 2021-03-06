@@ -8,7 +8,7 @@
 
 import UIKit
 
-class DateBarView: UIView {
+final class DateBarView: UIView {
 	var backgroundView: UIImageView
 	var timeLabel = UILabel()
 	var dateLabel = UILabel()

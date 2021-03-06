@@ -8,7 +8,7 @@
 
 import UIKit
 
-class LockBarView: UIView {
+final class LockBarView: UIView {
 	var backgroundView: UIImageView
 	var unlockSlider: GlintySlider
 	var cameraGrabber: UIImageView
