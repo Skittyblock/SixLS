@@ -309,11 +309,6 @@ extension LockScreenView {
 		}
 	}
 
-	@objc func addNotification(_ request: NCNotificationRequest) {
-		notifications.insert(request, at: 0)
-		reloadNotifications()
-	}
-
 	@objc func removeNotification(_ request: NCNotificationRequest) {
 		if let index = notifications.firstIndex(of: request) {
 			notifications.remove(at: index)

@@ -388,7 +388,7 @@ static void setIsLocked(BOOL locked) {
 	if ([self respondsToSelector:@selector(incomingSectionList)]) {
 		mainPageController.sixView.notificationList = telf.incomingSectionList;
 	} else {
-		[mainPageController.sixView addNotification:request];
+		mainPageController.sixView.notificationList = self;
 	}
 
 	return result;
