@@ -1,5 +1,7 @@
 // SixLSManager.h
 
+#import <UIKit/UIKit.h>
+
 #import "Headers/UserNotificationsKit/NCNotificationRequest.h"
 #import "Headers/CoverSheet/CSScrollView.h"
 

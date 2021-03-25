@@ -4,7 +4,7 @@ BUNDLE_NAME = SixLS
 SixLS_FILES = $(wildcard *.m) $(wildcard SkittyPrefs/*.m)
 SixLS_INSTALL_PATH = /Library/PreferenceBundles
 SixLS_PRIVATE_FRAMEWORKS = Preferences
-SixLS_CFLAGS = -fobjc-arc
+SixLS_CFLAGS = -fobjc-arc -fmodules -Wno-deprecated-declarations
 
 include $(THEOS_MAKE_PATH)/bundle.mk
 
