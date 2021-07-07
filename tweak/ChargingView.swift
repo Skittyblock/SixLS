@@ -6,7 +6,7 @@
 //  Copyright © 2020 Skitty. All rights reserved.
 //
 
-class ChargingView: UIView {
+final class ChargingView: UIView {
 	let backgroundView: UIView
 	let batteryImage: UIImageView
 

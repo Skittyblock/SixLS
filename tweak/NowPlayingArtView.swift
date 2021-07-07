@@ -8,7 +8,7 @@
 
 import UIKit
 
-class NowPlayingArtView: UIView {
+final class NowPlayingArtView: UIView {
 	let backgroundView = UIView()
 	let artworkContainer = UIView()
 	let artworkImageView = UIImageView()

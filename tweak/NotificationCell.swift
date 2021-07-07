@@ -8,7 +8,7 @@
 
 import UIKit
 
-class NotificationCell: UITableViewCell {
+final class NotificationCell: UITableViewCell {
 	var request: NCNotificationRequest
 
 	var titleLabel: UILabel
