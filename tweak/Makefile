@@ -4,6 +4,7 @@ include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = SixLS
 SixLS_FILES = $(wildcard *.swift) $(wildcard *.m) Tweak.x
+SixLS_FRAMEWORKS = AudioToolbox
 SixLS_PRIVATE_FRAMEWORKS = UserNotificationsKit
 SixLS_CFLAGS = -fobjc-arc -I./Headers
 SixLS_SWIFTFLAGS += -DTWEAK
