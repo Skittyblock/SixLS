@@ -1,7 +1,8 @@
 // SixLSManager.m
 
 #import "SixLSManager.h"
-#import <SpringBoard/SBLockScreenManager.h>
+#import <UIKit/UIKit.h>
+#import "Headers/SpringBoard/SBLockScreenManager.h"
 #import "Headers/UserNotificationsKit/NCNotificationAction.h"
 #import "Headers/UserNotificationsKit/NCNotificationActionRunner.h"
 

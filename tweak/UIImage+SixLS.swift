@@ -32,7 +32,11 @@ extension UIImage {
 
 	class func forSix(named name: String) -> UIImage? {
 #if TWEAK
-		return UIImage(contentsOfFile: "/Library/Application Support/Six/\(name).png")
+		let path = "/Library/Application Support/Six/\(name).png"
+		if access("/var/jb/", F_OK) == 0 {
+			return UIImage(contentsOfFile: "/var/jb" + path)
+		}
+		return UIImage(contentsOfFile: path)
 #else
 		return UIImage(named: name)
 #endif

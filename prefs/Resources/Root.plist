@@ -237,6 +237,8 @@
 			<string>Skitty</string>
 			<key>twitter</key>
 			<string>Skittyblock</string>
+			<key>imageURL</key>
+			<string>https://github.com/Skittyblock.png</string>
 			<key>subtitle</key>
 			<string>Developer</string>
 		</dict>

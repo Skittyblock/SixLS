@@ -6,6 +6,7 @@
 #import <CoverSheet/CoverSheet.h>
 #import <UserNotificationsKit/UserNotificationsKit.h>
 #import <SpringBoardFoundation/SBFLockScreenDateViewController.h>
+#import <rootless.h>
 #import "Headers/SpringBoard/SpringBoard.h"
 #import "SixLSManager.h"
 #import "SixLS-Swift.h"
@@ -43,7 +44,7 @@ static void refreshPrefs() {
 		settings = nil;
 	}
 	if (!settings) {
-		settings = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/xyz.skitty.sixls.plist"];
+		settings = [[NSMutableDictionary alloc] initWithContentsOfFile:ROOT_PATH_NS(@"/var/mobile/Library/Preferences/xyz.skitty.sixls.plist")];
 	}
 
 	enabled = [([settings objectForKey:@"enabled"] ?: @(YES)) boolValue];
@@ -141,7 +142,7 @@ static void setIsLocked(BOOL locked) {
 	if (enabled && unlockSound && mainPageController.sixView.alpha == 1) {
 		SystemSoundID sound = 0;
 		AudioServicesDisposeSystemSoundID(sound);
-		AudioServicesCreateSystemSoundID((CFURLRef) CFBridgingRetain([NSURL fileURLWithPath:@"/Library/Application Support/Six/unlock.caf"]), &sound);
+		AudioServicesCreateSystemSoundID((CFURLRef) CFBridgingRetain([NSURL fileURLWithPath:ROOT_PATH_NS(@"/Library/Application Support/Six/unlock.caf")]), &sound);
 		AudioServicesPlaySystemSound((SystemSoundID)sound);
 	}
 }
@@ -155,7 +156,7 @@ static void setIsLocked(BOOL locked) {
 	if (enabled && lockSound) {
 		SystemSoundID sound = 0;
 		AudioServicesDisposeSystemSoundID(sound);
-		AudioServicesCreateSystemSoundID((CFURLRef) CFBridgingRetain([NSURL fileURLWithPath:@"/Library/Application Support/Six/lock.caf"]), &sound);
+		AudioServicesCreateSystemSoundID((CFURLRef) CFBridgingRetain([NSURL fileURLWithPath:ROOT_PATH_NS(@"/Library/Application Support/Six/lock.caf")]), &sound);
 		AudioServicesPlaySystemSound((SystemSoundID)sound);
 	} else {
 		%orig;
@@ -172,7 +173,7 @@ static void setIsLocked(BOOL locked) {
 	if (enabled && chargeSound && self.isOnAC) {
 		SystemSoundID sound = 0;
 		AudioServicesDisposeSystemSoundID(sound);
-		AudioServicesCreateSystemSoundID((CFURLRef) CFBridgingRetain([NSURL fileURLWithPath:@"/Library/Application Support/Six/connect_power.caf"]), &sound);
+		AudioServicesCreateSystemSoundID((CFURLRef) CFBridgingRetain([NSURL fileURLWithPath:ROOT_PATH_NS(@"/Library/Application Support/Six/connect_power.caf")]), &sound);
 		AudioServicesPlaySystemSound((SystemSoundID)sound);
 	} else {
 		%orig;
@@ -184,7 +185,7 @@ static void setIsLocked(BOOL locked) {
 	if (enabled && chargeSound && [self _powerSourceWantsToPlayChime]) {
 		SystemSoundID sound = 0;
 		AudioServicesDisposeSystemSoundID(sound);
-		AudioServicesCreateSystemSoundID((CFURLRef) CFBridgingRetain([NSURL fileURLWithPath:@"/Library/Application Support/Six/connect_power.caf"]), &sound);
+		AudioServicesCreateSystemSoundID((CFURLRef) CFBridgingRetain([NSURL fileURLWithPath:ROOT_PATH_NS(@"/Library/Application Support/Six/connect_power.caf")]), &sound);
 		AudioServicesPlaySystemSound((SystemSoundID)sound);
 	} else {
 		%orig;
@@ -215,7 +216,7 @@ static void setIsLocked(BOOL locked) {
 	if (enabled && unlockSound) {
 		SystemSoundID sound = 0;
 		AudioServicesDisposeSystemSoundID(sound);
-		AudioServicesCreateSystemSoundID((CFURLRef) CFBridgingRetain([NSURL fileURLWithPath:@"/Library/Application Support/Six/unlock.caf"]), &sound);
+		AudioServicesCreateSystemSoundID((CFURLRef) CFBridgingRetain([NSURL fileURLWithPath:ROOT_PATH_NS(@"/Library/Application Support/Six/unlock.caf")]), &sound);
 		AudioServicesPlaySystemSound((SystemSoundID)sound);
 	}
 
